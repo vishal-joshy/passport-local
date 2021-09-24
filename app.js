@@ -2,7 +2,9 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 
-const Schema = mongoose.Schema;
+const indexRouter = require('./routes/indexRouter');
+const User = require('./models/userModel');
+
 const app = express();
 require('dotenv').config();
 
@@ -23,34 +25,8 @@ mongoose
 		console.log(err);
 	});
 
-//model
-const userModel = new Schema({
-	name: {
-		type: String,
-		required: true,
-	},
-	password: {
-		type: String,
-		required: true,
-	},
-});
-const User = mongoose.model('User', userModel);
-
 //routes
-app.get('/', (req, res, next) => {
-	res.render('index');
-});
-app.get('/sign-up', (req, res, next) => {
-	res.render('sign-up');
-});
-app.post('/', (req, res, next) => {
-	const newUser = new User({
-		name: req.body.username,
-		password: req.body.password,
-	});
-	console.log(newUser);
-	res.redirect('/');
-});
+app.use(indexRouter);
 
 app.use((err, req, res, next) => {
 	console.log(err);
