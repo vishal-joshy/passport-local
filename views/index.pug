@@ -1,7 +1,20 @@
 extends layout 
 
 block content 
-    button
-        a(href="#")  Sign in  
-    button
-        a(href="/user-form")  SignUp 
+
+    if user 
+        h1 hello #{user.username}
+        button 
+            a(href="/log-out") Logout  
+    else 
+        form(action="/log-in", method="post") 
+            label(for="username") Username
+            input(type="text" name = 'username' placeholder='username' ) 
+            br
+            label(for="password") Password
+            input(type="password" name = 'password' placeholder='password' )
+            br
+            button(type="submit")  Login
+        
+        button
+            a(href="/sign-up") Sign up

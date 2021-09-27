@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const { body, validationResult } = require('express-validator');
 
 const userModel = new Schema({
-	name: {
+	username: {
 		type: String,
 		required: true,
 	},

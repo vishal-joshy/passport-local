@@ -1,0 +1,10 @@
+extends layout 
+
+block content 
+
+    form(action="", method="post") 
+        label(for="username") Username
+        input(type="text" name = 'username' placeholder='username' ) 
+        label(for="password") Password
+        input(type="password" name = 'password' placeholder='password' )
+        button(type="submit")  Sign Up
