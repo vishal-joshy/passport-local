@@ -5,6 +5,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const flash = require('express-flash');
 
 const User = require('./models/userModel');
 
@@ -65,6 +66,7 @@ passport.deserializeUser(function (id, done) {
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
+app.use(flash());
 
 //set view
 app.set('views', path.join(__dirname, 'views'));
@@ -81,14 +83,20 @@ app.get('/log-out', (req, res) => {
 	res.redirect('/');
 });
 //Post
-app.post('/sign-up', async (req, res) => {
+app.post('/sign-up', (req, res) => {
 	console.log('response body', req.body);
-	const encryptedPass = await bcrypt.hash(req.body.password, 10);
-	const newUser = new User({ username: req.body.username, password: encryptedPass }).save((err) => {
+	bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
 		if (err) {
 			return next(err);
 		}
-		res.redirect('/');
+		const newUser = new User({ username: req.body.username, password: hashedPassword }).save(
+			(err) => {
+				if (err) {
+					return next(err);
+				}
+				res.redirect('/');
+			}
+		);
 	});
 });
 
@@ -97,6 +105,7 @@ app.post(
 	passport.authenticate('local', {
 		successRedirect: '/',
 		failureRedirect: '/',
+		failureFlash: true,
 	})
 );
 
