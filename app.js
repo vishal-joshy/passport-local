@@ -7,6 +7,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const flash = require('express-flash');
 
+const indexRoutes = require('./routes/indexRoutes');
+
 const User = require('./models/userModel');
 
 require('dotenv').config();
@@ -73,41 +75,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 //routes
-//get
-app.get('/', (req, res) => res.render('index', { user: req.user }));
-app.get('/sign-up', (req, res) => {
-	res.render('sign-up-form');
-});
-app.get('/log-out', (req, res) => {
-	req.logout();
-	res.redirect('/');
-});
-//Post
-app.post('/sign-up', (req, res) => {
-	console.log('response body', req.body);
-	bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
-		if (err) {
-			return next(err);
-		}
-		const newUser = new User({ username: req.body.username, password: hashedPassword }).save(
-			(err) => {
-				if (err) {
-					return next(err);
-				}
-				res.redirect('/');
-			}
-		);
-	});
-});
-
-app.post(
-	'/log-in',
-	passport.authenticate('local', {
-		successRedirect: '/',
-		failureRedirect: '/',
-		failureFlash: true,
-	})
-);
+app.use(indexRoutes);
 
 //error handling
 app.use((err, req, res, next) => {
